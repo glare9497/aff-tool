@@ -1,0 +1,5 @@
+﻿ID đơn hàng,Trạng thái đặt hàng,Thời gian đặt hàng,Item ID,Tên Item,Giá(₫),Giá trị mua(₫),Hoa hồng ròng tiếp thị liên kết(₫),Sub_id1,Sub_id2,Sub_id3
+2610010001,Đã hoàn thành,2026-10-01 10:00:00,111,Nồi chiên không dầu 5L,"1.290.000","1.290.000","64.500",tiktok,noichien01,
+2610010002,Đang chờ xử lý,2026-10-05 20:15:00,222,Máy hút bụi mini,"350,000","350,000","17,500",tiktok,hutbui01,
+2610010003,Đã hủy,2026-10-06 09:00:00,111,Nồi chiên không dầu 5L,1290000,1290000,64500,facebook,noichien01,
+2610010004,Đang chờ xử lý,07/10/2026 11:30,333,Kệ gia vị,99000,99000,4950,-,-,
