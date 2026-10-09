@@ -6,7 +6,13 @@ import { revalidatePath } from "next/cache";
 import { db, ensureSchema } from "@/db";
 import { clicks, links } from "@/db/schema";
 import { CHANNELS } from "@/lib/format";
-import { generateShopeeShortLink, hasShopeeApi } from "@/lib/shopee";
+import {
+  buildShopeeRedirectLink,
+  generateShopeeShortLink,
+  hasShopeeAffiliateId,
+  hasShopeeApi,
+  isShopeeAffiliateLink,
+} from "@/lib/shopee";
 
 export type FormState = { ok?: string; error?: string };
 
@@ -25,12 +31,17 @@ function randomSlug(channel: string) {
 
 async function resolveAffiliateUrl(originUrl: string, affiliateUrl: string, channel: string, slug: string) {
   if (affiliateUrl) return affiliateUrl;
-  if (detectPlatform(originUrl) === "shopee" && hasShopeeApi()) {
-    // sub_id1 = channel, sub_id2 = slug → lets imported orders be matched back to this link
-    return generateShopeeShortLink(originUrl, [channel, slug]);
+  if (detectPlatform(originUrl) !== "shopee" || isShopeeAffiliateLink(originUrl)) {
+    // Treat the pasted URL as an affiliate link generated elsewhere
+    return originUrl;
   }
-  // No API: treat the pasted URL as an affiliate link generated manually in the Shopee portal
-  return originUrl;
+  // sub_id1 = channel, sub_id2 = slug → lets imported orders be matched back to this link
+  if (hasShopeeApi()) return generateShopeeShortLink(originUrl, [channel, slug]);
+  if (hasShopeeAffiliateId()) return buildShopeeRedirectLink(originUrl, [channel, slug]);
+  // A bare product URL earns no commission, so refuse instead of saving it silently
+  throw new Error(
+    `Chưa tạo được link affiliate cho ${originUrl}: cần SHOPEE_AFFILIATE_ID, hoặc dán link affiliate tạo từ trang Shopee Affiliate`,
+  );
 }
 
 async function insertLink(input: { originUrl: string; affiliateUrl: string; title: string; channel: string; slug: string; note?: string }) {

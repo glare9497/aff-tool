@@ -4,10 +4,10 @@ import { db, ensureSchema } from "@/db";
 import { clicks, links } from "@/db/schema";
 import { getBaseUrl } from "@/lib/base-url";
 import { fmtNum } from "@/lib/format";
-import { hasShopeeApi } from "@/lib/shopee";
+import { hasShopeeAffiliateId, hasShopeeApi } from "@/lib/shopee";
 import { deleteLink } from "./actions";
 import { CopyButton } from "@/components/copy-button";
-import { LinkForms } from "./forms";
+import { LinkForms, type ShopeeLinkMode } from "./forms";
 
 // Always rendered per request: reads cookies, search params and live data
 export const instant = false;
@@ -16,6 +16,7 @@ export default async function LinksPage() {
   await connection();
   await ensureSchema();
   const base = await getBaseUrl();
+  const shopeeMode: ShopeeLinkMode = hasShopeeApi() ? "api" : hasShopeeAffiliateId() ? "affiliateId" : "manual";
   const rows = await db
     .select({ link: links, clicks: sql<number>`count(${clicks.id})` })
     .from(links)
@@ -26,7 +27,7 @@ export default async function LinksPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Quản lý link</h1>
-      <LinkForms hasApi={hasShopeeApi()} />
+      <LinkForms shopeeMode={shopeeMode} />
 
       <div className="card overflow-x-auto">
         <table className="table">

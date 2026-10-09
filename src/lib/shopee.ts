@@ -6,6 +6,29 @@ export function hasShopeeApi() {
   return Boolean(process.env.SHOPEE_APP_ID && process.env.SHOPEE_APP_SECRET);
 }
 
+export function hasShopeeAffiliateId() {
+  return Boolean(process.env.SHOPEE_AFFILIATE_ID);
+}
+
+/** Affiliate links already generated in the Shopee portal (s.shopee.vn/xxx, shope.ee/xxx). */
+export function isShopeeAffiliateLink(url: string) {
+  const host = new URL(url).hostname;
+  return host === "s.shopee.vn" || host.endsWith("shope.ee");
+}
+
+/**
+ * Builds an affiliate link without the Open API, using the long `an_redir` format.
+ * Unofficial: Shopee does not document it, so verify attribution with a test order.
+ */
+export function buildShopeeRedirectLink(originUrl: string, subIds: string[]) {
+  const url = new URL("https://s.shopee.vn/an_redir");
+  url.searchParams.set("origin_link", originUrl);
+  url.searchParams.set("affiliate_id", process.env.SHOPEE_AFFILIATE_ID!);
+  // Sub IDs are joined with "-" and land in the report's Sub_id1..Sub_id5 columns
+  url.searchParams.set("sub_id", subIds.map(toSubId).filter(Boolean).slice(0, 5).join("-"));
+  return url.toString();
+}
+
 /** Shopee only accepts letters and digits in sub_id. */
 export function toSubId(value: string) {
   return value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 50);

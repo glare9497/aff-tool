@@ -26,7 +26,8 @@ Deploy lên internet (miễn phí): xem [DEPLOY.md](DEPLOY.md).
 Để biết đơn nào đến từ video nào, mỗi link affiliate phải mang **slug** của nó trong Sub ID:
 
 - **Có Shopee Open API** (`SHOPEE_APP_ID`, `SHOPEE_APP_SECRET`): tool tự tạo link với `sub_id1 = kênh`, `sub_id2 = slug`.
-- **Chưa có API**: khi tạo link trong trang Shopee Affiliate, điền Sub ID = slug (vd `noichien01`), rồi dán link đó vào ô "Link affiliate".
+- **Chưa có API nhưng có `SHOPEE_AFFILIATE_ID`**: tool tự tạo link dạng `https://s.shopee.vn/an_redir?origin_link=...&affiliate_id=...&sub_id=kênh-slug`. Định dạng này Shopee không công bố chính thức: kiểm tra bằng 1 đơn thử xem báo cáo có ghi đúng Sub ID không.
+- **Không có cả hai**: khi tạo link trong trang Shopee Affiliate, điền Sub ID = slug (vd `noichien01`), rồi dán link đó vào ô "Link affiliate".
 
 Slug chỉ gồm a-z, 0-9 vì Shopee không nhận ký tự khác trong Sub ID.
 

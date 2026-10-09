@@ -25,7 +25,16 @@ function ChannelSelect() {
   );
 }
 
-export function LinkForms({ hasApi }: { hasApi: boolean }) {
+export type ShopeeLinkMode = "api" | "affiliateId" | "manual";
+
+const MODE_HINT: Record<ShopeeLinkMode, string> = {
+  api: "✅ Shopee API đã kết nối: link affiliate được tạo tự động",
+  affiliateId: "✅ Tạo link affiliate tự động bằng Affiliate ID (không cần API)",
+  manual: "⚠️ Chưa có Shopee API / SHOPEE_AFFILIATE_ID: dán link affiliate tạo từ trang Shopee Affiliate",
+};
+
+export function LinkForms({ shopeeMode }: { shopeeMode: ShopeeLinkMode }) {
+  const auto = shopeeMode !== "manual";
   const [mode, setMode] = useState<"single" | "bulk">("single");
   const [single, singleAction, singlePending] = useActionState(createLink, {});
   const [bulk, bulkAction, bulkPending] = useActionState(bulkCreateLinks, {});
@@ -42,9 +51,7 @@ export function LinkForms({ hasApi }: { hasApi: boolean }) {
           Tạo hàng loạt
         </button>
         <span className="ml-auto self-center text-xs text-muted">
-          {hasApi
-            ? "✅ Shopee API đã kết nối: link affiliate được tạo tự động"
-            : "⚠️ Chưa có Shopee API: dán link affiliate tạo từ trang Shopee Affiliate"}
+          {MODE_HINT[shopeeMode]}
         </span>
       </div>
 
@@ -56,7 +63,7 @@ export function LinkForms({ hasApi }: { hasApi: boolean }) {
           </div>
           <div className="md:col-span-2">
             <label className="label">
-              Link affiliate {hasApi ? "(bỏ trống để tạo tự động)" : "(bỏ trống nếu link ở trên đã là link affiliate)"}
+              Link affiliate {auto ? "(bỏ trống để tạo tự động)" : "(bỏ trống nếu link ở trên đã là link affiliate)"}
             </label>
             <input name="affiliateUrl" className="input" placeholder="https://s.shopee.vn/..." />
           </div>
